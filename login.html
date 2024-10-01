@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro/Login - PIOPLINKO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1A2B48;
+            color: #F4F4F4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #FFD700;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .form-container {
+            background-color: #244973;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            text-align: center;
+        }
+
+        .form-container h2 {
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #F4F4F4;
+        }
+
+        .form-container input {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #3C4F70;
+            color: #F4F4F4;
+        }
+
+        .form-container input[type="submit"] {
+            background-color: #FFD700;
+            color: #1A2B48;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        footer {
+            display: block;
+            margin-top: 3%;
+            text-align: center;
+            font-size: 14px;
+            color: #F4F4F4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>PIOPLINKO</h1>
+        <h2>Registro</h2>
+        <form id="registerForm">
+            <label for="username">Nombre de usuario</label>
+            <input type="text" id="username" name="username" required>
+
+            <input type="submit" value="Aceptar">
+        </form>
+    </div>
+
+    <footer>
+        &copy; 2024 PioPlinko Inc.
+    </footer>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar el envío del formulario
+
+            // Obtener el nombre de usuario
+            var username = document.getElementById('username').value;
+
+            // Obtener la lista de jugadores del localStorage
+            var players = JSON.parse(localStorage.getItem('players')) || [];
+
+            // Añadir el nuevo usuario a la lista
+            players.push(username);
+
+            // Guardar la lista actualizada en el localStorage
+            localStorage.setItem('players', JSON.stringify(players));
+
+            // Redirigir a la página de Top 10 Puntajes
+            window.location.href = 'top10.html';
+        });
+    </script>
+</body>
+</html>

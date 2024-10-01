@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 10 Puntajes - PIOPLINKO</title>
+    <style>
+        body {
+            font-family: 'AnjaElianeAccent', Arial, sans-serif;
+            background-color: #1A2B48;
+            color: #F4F4F4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #FFD700;
+            font-size: 40px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #B3CDE0;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 60%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #244973;
+            color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3B5998;
+            color: #FFD700;
+            font-size: 20px;
+        }
+
+        td {
+            font-size: 18px;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #3C4F70;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #465A84;
+        }
+
+        tbody tr:hover {
+            background-color: #5A6B99;
+        }
+
+        .score {
+            text-align: right;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 16px;
+            color: #F4F4F4;
+            padding: 20px;
+            background-color: #1A2B48;
+        }
+
+        .description {
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+            color: #B3CDE0;
+            font-size: 18px;
+        }
+
+        /* Estilos para el botón de reinicio */
+        #resetButton {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #FF4500;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #resetButton:hover {
+            background-color: #E03B00;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>PIOPLINKO</h1>
+    <h2>Top 10 mejores jugadores</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Jugadores</th>
+                <th>Puntaje</th>
+            </tr>
+        </thead>
+        <tbody id="scoreTable">
+            <!-- Filas de jugadores dinámicamente insertadas aquí -->
+        </tbody>
+    </table>
+
+    <button id="resetButton">Reiniciar Jugadores</button> <!-- Botón para reiniciar los nombres -->
+
+    <div class="description">
+        <p>¿Qué es el Pinko? El juego, inspirado en el clásico juego de feria donde se deja caer una bola a través de una serie de clavijas para aterrizar en espacios que otorgan premios, ha encontrado un nuevo hogar en la era digital.</p>
+    </div>
+
+    <footer>
+        &copy; 2024 PioPlinko Inc.
+    </footer>
+
+    <script>
+        // Obtener la lista de jugadores guardada en localStorage
+        var players = JSON.parse(localStorage.getItem('players')) || [];
+
+        // Obtener el elemento de la tabla donde se mostrarán los jugadores
+        var scoreTable = document.getElementById('scoreTable');
+
+        // Función para mostrar los jugadores en la tabla
+        function displayPlayers() {
+            // Limpiar la tabla
+            scoreTable.innerHTML = '';
+
+            // Mostrar los jugadores guardados en localStorage
+            players.forEach(function(player, index) {
+                var row = document.createElement('tr');
+                var playerCell = document.createElement('td');
+                var scoreCell = document.createElement('td');
+
+                playerCell.textContent = player;
+                scoreCell.textContent = 0;  // Inicialmente con puntaje 0
+
+                row.appendChild(playerCell);
+                row.appendChild(scoreCell);
+                scoreTable.appendChild(row);
+            });
+        }
+
+        // Mostrar la lista de jugadores al cargar la página
+        displayPlayers();
+
+        // Función para reiniciar los nombres guardados
+        document.getElementById('resetButton').addEventListener('click', function() {
+            // Solicitar la contraseña
+            var password = prompt("Por favor, ingrese la contraseña para reiniciar los jugadores:");
+
+            // Definir la contraseña correcta
+            var correctPassword = "1234"; // Puedes cambiarla por la que desees
+
+            // Comprobar si la contraseña es correcta
+            if (password === correctPassword) {
+                // Borrar los nombres de localStorage
+                localStorage.removeItem('players');
+
+                // Limpiar la tabla de jugadores
+                scoreTable.innerHTML = '';
+
+                // Recargar la página para reflejar los cambios
+                location.reload();
+            } else {
+                // Si la contraseña es incorrecta, mostrar un mensaje de error
+                alert("Contraseña incorrecta. No se puede reiniciar la lista de jugadores.");
+            }
+        });
+    </script>
+</body>
+</html>
