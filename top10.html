@@ -13,11 +13,22 @@
             padding: 0;
         }
 
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #244973;
+        }
+
         h1 {
-            text-align: center;
             color: #FFD700;
             font-size: 40px;
-            margin-top: 20px;
+            margin: 0;
+        }
+
+        #logo {
+            width: 100px;
         }
 
         h2 {
@@ -28,7 +39,7 @@
         }
 
         table {
-            width: 60%;
+            width: 80%;
             margin: 20px auto;
             border-collapse: collapse;
             background-color: #244973;
@@ -39,7 +50,7 @@
 
         th, td {
             padding: 15px;
-            text-align: left;
+            text-align: center;
         }
 
         th {
@@ -64,10 +75,6 @@
             background-color: #5A6B99;
         }
 
-        .score {
-            text-align: right;
-        }
-
         footer {
             margin-top: 40px;
             text-align: center;
@@ -85,7 +92,6 @@
             font-size: 18px;
         }
 
-        /* Estilos para el botón de reinicio */
         #resetButton {
             display: block;
             width: 200px;
@@ -106,13 +112,20 @@
 </head>
 <body>
 
-    <h1>PIOPLINKO</h1>
+    <header>
+        <h1>PIOPLINKO</h1>
+        <a href="https://www.pioix.edu.ar/" target="_blank">
+            <img id="logo" src="C:\Users\alumnodigitales1\Downloads\PIOIX.png" alt="Casa Salesiana Obra de Don Bosco">
+        </a>
+    </header>
+
     <h2>Top 10 mejores jugadores</h2>
 
     <table>
         <thead>
             <tr>
                 <th>Jugadores</th>
+                <th>Conteo de Tiempo (s)</th>
                 <th>Puntaje</th>
             </tr>
         </thead>
@@ -121,7 +134,7 @@
         </tbody>
     </table>
 
-    <button id="resetButton">Reiniciar Jugadores</button> <!-- Botón para reiniciar los nombres -->
+    <button id="resetButton">Reiniciar Jugadores</button>
 
     <div class="description">
         <p>¿Qué es el Pinko? El juego, inspirado en el clásico juego de kermes donde se deja caer una pelota a través de una serie de palos para aterrizar en espacios que otorgan puntos, ha encontrado un nuevo hogar en la famosa ExpoPio.</p>
@@ -132,8 +145,18 @@
     </footer>
 
     <script>
+        // Contraseña hasheada (por ejemplo, "Viva el futbol")
+        const correctPasswordHash = '9621b355269efb8ee1b1191ef84796d5991f404e75c930a115ca6c2652973a24';
+
         // Obtener la lista de jugadores guardada en localStorage
         var players = JSON.parse(localStorage.getItem('players')) || [];
+        
+        // Limitar a los 10 mejores jugadores
+        var playerData = players.slice(0, 10).map(player => ({
+            name: player,
+            time: 0,       // Inicializar tiempo en 0
+            points: 0,     // Inicializar puntaje en 0
+        }));
 
         // Obtener el elemento de la tabla donde se mostrarán los jugadores
         var scoreTable = document.getElementById('scoreTable');
@@ -144,15 +167,19 @@
             scoreTable.innerHTML = '';
 
             // Mostrar los jugadores guardados en localStorage
-            players.forEach(function(player, index) {
+            playerData.forEach(function(player, index) {
                 var row = document.createElement('tr');
                 var playerCell = document.createElement('td');
+                var timeCell = document.createElement('td');
                 var scoreCell = document.createElement('td');
 
-                playerCell.textContent = player;
-                scoreCell.textContent = 0;  // Inicialmente con puntaje 0
+                // Agregar el trofeo al primer jugador
+                playerCell.textContent = (index === 0 ? '🏆 ' : '') + player.name; 
+                timeCell.textContent = player.time;  // Siempre 0
+                scoreCell.textContent = player.points; // Siempre 0
 
                 row.appendChild(playerCell);
+                row.appendChild(timeCell);
                 row.appendChild(scoreCell);
                 scoreTable.appendChild(row);
             });
@@ -162,17 +189,20 @@
         displayPlayers();
 
         // Función para reiniciar los nombres guardados
-        document.getElementById('resetButton').addEventListener('click', function() {
+        document.getElementById('resetButton').addEventListener('click', async function() {
             // Solicitar la contraseña
             var password = prompt("Por favor, ingrese la contraseña para reiniciar los jugadores:");
 
-            // Definir la contraseña correcta
-            var correctPassword = "Viva el futbol"; // Puedes cambiarla por la que desees
+            // Hashear la contraseña ingresada
+            const passwordHash = await hashPassword(password);
 
-            // Comprobar si la contraseña es correcta
-            if (password === correctPassword) {
+            // Comprobar si el hash de la contraseña es correcto
+            if (passwordHash === correctPasswordHash) {
                 // Borrar los nombres de localStorage
                 localStorage.removeItem('players');
+
+                // Limpiar los datos de jugadores
+                playerData = [];
 
                 // Limpiar la tabla de jugadores
                 scoreTable.innerHTML = '';
@@ -184,6 +214,16 @@
                 alert("Contraseña incorrecta. No se puede reiniciar la lista de jugadores.");
             }
         });
+
+        // Función para crear un hash SHA-256
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
     </script>
 </body>
 </html>
