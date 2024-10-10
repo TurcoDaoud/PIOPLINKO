@@ -183,6 +183,26 @@
         // Mostrar la lista de jugadores al cargar la página
         displayPlayers();
 
+        // Función para cargar jugadores desde el archivo jugadores.txt
+        async function loadPlayersFromFile() {
+            try {
+                const response = await fetch('jugadores.txt');
+                const fileContent = await response.text();
+                players = fileContent.split('\n').filter(Boolean);
+                localStorage.setItem('players', JSON.stringify(players));
+                playerData = players.slice(0, 10).map(player => ({
+                    name: player,
+                    points: 0, // Inicializar puntaje en 0
+                }));
+                displayPlayers();
+            } catch (error) {
+                console.error("Error al cargar jugadores desde el archivo:", error);
+            }
+        }
+
+        // Cargar jugadores al iniciar
+        loadPlayersFromFile();
+
         // Función para reiniciar los nombres guardados
         document.getElementById('resetButton').addEventListener('click', async function() {
             // Solicitar la contraseña
@@ -219,6 +239,41 @@
                 .map(b => b.toString(16).padStart(2, '0'))
                 .join('');
         }
+
+        // Función para conectarse a Arduino
+        async function connectToArduino() {
+            const port = await navigator.serial.requestPort();
+            await port.open({ baudRate: 9600 });
+
+            const decoder = new TextDecoderStream();
+            const inputDone = port.readable.pipeTo(decoder.writable);
+            const inputStream = decoder.readable;
+
+            const reader = inputStream.getReader();
+            
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) {
+                    reader.releaseLock();
+                    break;
+                }
+                if (value) {
+                    // Aquí recibes los puntos del Arduino
+                    console.log("Puntos recibidos: ", value);
+                    updatePoints(value.trim());
+                }
+            }
+        }
+
+        // Actualizar los puntos en la tabla
+        function updatePoints(points) {
+            // Asume que el primer jugador es el que recibe los puntos
+            playerData[0].points = points;
+            displayPlayers();
+        }
+
+        // Llamar a la función al cargar la página
+        connectToArduino();
     </script>
 </body>
 </html>
