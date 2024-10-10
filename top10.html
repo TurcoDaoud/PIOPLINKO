@@ -125,7 +125,6 @@
         <thead>
             <tr>
                 <th>Jugadores</th>
-                <th>Conteo de Tiempo (s)</th>
                 <th>Puntaje</th>
             </tr>
         </thead>
@@ -154,7 +153,6 @@
         // Limitar a los 10 mejores jugadores
         var playerData = players.slice(0, 10).map(player => ({
             name: player,
-            time: 0,       // Inicializar tiempo en 0
             points: 0,     // Inicializar puntaje en 0
         }));
 
@@ -170,16 +168,13 @@
             playerData.forEach(function(player, index) {
                 var row = document.createElement('tr');
                 var playerCell = document.createElement('td');
-                var timeCell = document.createElement('td');
                 var scoreCell = document.createElement('td');
 
                 // Agregar el trofeo al primer jugador
                 playerCell.textContent = (index === 0 ? '🏆 ' : '') + player.name; 
-                timeCell.textContent = player.time;  // Siempre 0
                 scoreCell.textContent = player.points; // Siempre 0
 
                 row.appendChild(playerCell);
-                row.appendChild(timeCell);
                 row.appendChild(scoreCell);
                 scoreTable.appendChild(row);
             });
